@@ -16,15 +16,14 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     MainWindow w;
-    w.resize(1900,1200);
+   // w.resize(1100,700);
 
-    std::string nameOfPattern(argv[1]);
-    w.getTableFromPattern(nameOfPattern);
+//    w.getTableFromPattern(nameOfPattern);
 
     w.show();
 
-    usleep(5000);
-    w.execLifeGame();
+//    usleep(5000);
+//    w.execLifeGame();
 
     return a.exec();
 }

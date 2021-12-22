@@ -15,18 +15,37 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
 
-    ui->tableWidget->resize(1900,1200);
-   int columnCount = ui->tableWidget->columnCount();
-   int rowCount = ui->tableWidget->rowCount();
+    //ui->tableWidget->resize(1500,1200);
 
-
-   for(int i = 0; i < columnCount; ++i) ui->tableWidget->setColumnWidth(i, 5);
-   for(int i = 0; i < rowCount; ++i)  ui->tableWidget->setRowHeight(i, 5);
+   ui->table->setRowCount(20);
+   ui->table->setColumnCount(30);
 
 
 
-   ui->tableWidget->setItem(8, 0, new QTableWidgetItem);
-   ui->tableWidget->item(8, 0)->setBackground(Qt::red);
+   int columnCount = ui->table->columnCount();
+   int rowCount = ui->table->rowCount();
+
+   for(int i = 0; i < ui->table->rowCount();++i) {
+       ui->table->setRowHeight(i, 30);
+   }
+   for(int i = 0; i < ui->table->columnCount();++i) {
+       ui->table->setColumnWidth(i, 30);
+   }
+
+
+
+
+
+   for(int i = 0; i < ui->table->rowCount(); ++i) {
+       for(int j = 0; j < ui->table->columnCount(); ++j) {
+           ui->table->setItem(i, j, new QTableWidgetItem);
+       }
+   }
+
+
+
+  // ui->tableWidget->setItem(8, 0, new QTableWidgetItem);
+  // ui->tableWidget->item(8, 0)->setBackground(Qt::red);
 
 }
 
@@ -43,9 +62,9 @@ void MainWindow::getTableFromPattern(std::string patternFileName) {
     patternStream >> rowCount >> columnCount;
 
 
-    for(int i = 0; i < ui->tableWidget->rowCount(); ++i) {
-        for(int j = 0; j < ui->tableWidget->columnCount(); ++j) {
-            ui->tableWidget->setItem(i, j, new QTableWidgetItem);
+    for(int i = 0; i < ui->table->rowCount(); ++i) {
+        for(int j = 0; j < ui->table->columnCount(); ++j) {
+            ui->table->setItem(i, j, new QTableWidgetItem);
         }
     }
 
@@ -57,10 +76,10 @@ void MainWindow::getTableFromPattern(std::string patternFileName) {
             char character;  // . or O
             patternStream >> character;
             if(character == 'O') {
-                ui->tableWidget->item(i, j)->setBackground(Qt::red);
+                ui->table->item(i, j)->setBackground(Qt::red);
             }
             else if (character=='.') {
-                ui->tableWidget->item(i, j)->setBackground(Qt::white);
+                ui->table->item(i, j)->setBackground(Qt::white);
             }
         }
     }
@@ -81,8 +100,8 @@ std::vector<std::pair<int, int> > getListOfNeighborCells(int i, int j) {
     //for(auto it: neighbourCells) std::cout << it.first << " " << it.second << '\n';
     neighbourCells.erase(std::remove_if(neighbourCells.begin(), neighbourCells.end(),
                 [](std::pair<int,int> element) {
-                    return element.first < 0 || element.first >= 1000
-                        || element.second < 0 || element.second >= 1000;
+                    return element.first < 0 || element.first >= 20
+                        || element.second < 0 || element.second >= 30;
                 }
     ), neighbourCells.end());
 //    for(int i = 0; i < neighbourCells.size(); ++i) {
@@ -100,39 +119,59 @@ std::vector<std::pair<int, int> > getListOfNeighborCells(int i, int j) {
 
 void MainWindow::execLifeGame() {
 
-    std::cout << ui->tableWidget->rowCount() << " " << ui->tableWidget->columnCount() << '\n';
+    std::cout << ui->table->rowCount() << " " << ui->table->columnCount() << '\n';
 
     for(int i = 0; i < 10; i++) {
-        usleep(1000);
-        for(int i = 0; i < ui->tableWidget->rowCount(); ++i) {
-            for(int j = 0; j < ui->tableWidget->columnCount(); ++j) {
+        usleep(5000);
+        ui->table->item(5,5)->setBackground(Qt::red);
+        for(int i = 0; i < ui->table->rowCount(); ++i) {
+            for(int j = 0; j < ui->table->columnCount(); ++j) {
                 int countOfAliveCells = 0;
                 std::vector<std::pair<int,int>> neighbours = getListOfNeighborCells(i,j);
+                std::cerr << "CELL coordinates: " << i+1 << " " << j+1 << '\n';
+                for(auto it: neighbours) std::cerr << it.first << " " << it.second << "\n";
 
+                std::cerr << '\n';
                 for(auto it: neighbours) {
                    // std::cout << it.first << " " << it.second << '\n';
-                    if(ui->tableWidget->item(it.first, it.second)->background().color() == Qt::red) countOfAliveCells++;
+                    if(ui->table->item(it.first, it.second)->background().color() == Qt::red) countOfAliveCells++;
                 }
-
+                std::cerr << countOfAliveCells << '\n';
                 //dead cell with exactly three live neighbours becomes a live cell
-                if(ui->tableWidget->item(i, j)->background().color() == Qt::white) {
-                    if(countOfAliveCells == 3) ui->tableWidget->item(i, j)->setBackground(Qt::red);
+                if(ui->table->item(i, j)->background().color() == Qt::white) {
+                    if(countOfAliveCells == 3) ui->table->item(i, j)->setBackground(Qt::red);
                 }
 
 
-                else if(ui->tableWidget->item(i, j)->background().color() == Qt::red) { // if the cell is alive
+                else if(ui->table->item(i, j)->background().color() == Qt::red) { // if the cell is alive
 
                     //Any live cell with fewer than two live neighbours dies, as if by underpopulation
-                    if(countOfAliveCells < 2) {ui->tableWidget->item(i, j)->setBackground(Qt::white);}
+                    if(countOfAliveCells < 2) {ui->table->item(i, j)->setBackground(Qt::white);}
 
                     //Any live cell with two or three live neighbours lives on to the next generation.
                     if(countOfAliveCells == 2 || countOfAliveCells == 3) {/*nothing to do*/}
 
                     //Any live cell with more than three live neighbours dies, as if by overpopulation.
-                    if(countOfAliveCells > 3) {ui->tableWidget->item(i, j)->setBackground(Qt::white);}
+                    if(countOfAliveCells > 3) {ui->table->item(i, j)->setBackground(Qt::white);}
 
                 }
             }
         }
     }
+}
+
+void MainWindow::on_exportPatternButton_clicked()
+{
+
+}
+
+void MainWindow::on_table_cellClicked(int row, int column)
+{
+    ui->table->setItem(row, column, new QTableWidgetItem);
+    ui->table->item(row, column)->setBackground(Qt::red);
+}
+
+void MainWindow::on_pushButton_clicked()
+{
+    execLifeGame();
 }
