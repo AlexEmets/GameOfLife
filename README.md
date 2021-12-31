@@ -5,7 +5,6 @@
 
 ## Rules
 
-Rules
 The universe of the Game of Life is an infinite, two-dimensional orthogonal grid of square cells, each of which is in one of two possible states, live or dead. 
 Every cell interacts with its eight neighbours, which are the cells that are horizontally, vertically, or diagonally adjacent. 
 At each step in time, the following transitions occur:
@@ -19,4 +18,19 @@ At each step in time, the following transitions occur:
 
 <p align="center">
   <img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/Gospers_glider_gun.gif?raw=true" alt="Sublime's custom image"/>
+</p>
+
+
+<h1 align="center">Technologies used</h1>
+
+- C++
+- Qmake
+- Qt5
+- make
+
+
+<h1 align="center">GUI Interface</h1>
+
+<p align="center">
+ <img src="https://github.com/AlexEmets/GameOfLife/blob/a2230fd3ea8be58381dcb2f268613d20141ea626/GUIExample1.png" alt="Sublime's custom image"/>
 </p>
