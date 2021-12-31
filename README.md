@@ -34,3 +34,16 @@ At each step in time, the following transitions occur:
 <p align="center">
  <img src="https://github.com/AlexEmets/GameOfLife/blob/a2230fd3ea8be58381dcb2f268613d20141ea626/GUIExample1.png" alt="Sublime's custom image"/>
 </p>
+
+
+<h1 align="center">How to build</h1>
+
+- git clone https://github.com/AlexEmets/GameOfLife.git
+- cd GameOfLife
+- mkdir build
+- cd build
+- qmake ..
+- make
+- ./LifeGame
+
+P.S was tested only under Ubuntu 18.04
