@@ -15,12 +15,10 @@ const int columnCount = 30;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    needToStop(false)
 {
     ui->setupUi(this);
-
-
-    //ui->tableWidget->resize(1500,1200);
 
    ui->table->setRowCount(rowCount);
    ui->table->setColumnCount(columnCount);
@@ -57,9 +55,6 @@ void MainWindow::getTableFromPattern(std::string patternFileName) {
         }
     }
 
-
-
-    //std::cout << rowCount << " " << columnCount << '\n';
     for(int i = 0; i < rowCount; ++i) {
         for(int j = 0; j < columnCount; ++j) {
             char character;  // . or O
@@ -96,9 +91,15 @@ std::vector<std::pair<int, int> > getListOfNeighborCells(int i, int j) {
     return neighbourCells;
 }
 
+void MainWindow::on_stopGameButton_clicked()
+{
+    needToStop=true;
+}
+
 void MainWindow::execLifeGame() {
 
-    //std::cout << ui->table->rowCount() << " " << ui->table->columnCount() << '\n';
+    needToStop = false;
+
     bool isCellAlive[rowCount][columnCount];
     for(int i = 0; i < rowCount; ++i) {
         for(int j = 0; j < columnCount; ++j) {
@@ -110,23 +111,26 @@ void MainWindow::execLifeGame() {
 
 
     for(int i = 0; i < 100; i++) {
-       // usleep(500000);
-       // usleep(5);
+
         bool isTableChanging = false;
+
         for(int i = 0; i < rowCount; ++i) {
-            for(int j = 0; j < columnCount; ++j) {
+            for(int j = 0; j < columnCount; ++j) { 
                 ui->table->repaint();
+                if(needToStop) return;
+
                 int countOfAliveCells = 0;
                 std::vector<std::pair<int,int>> neighbours = getListOfNeighborCells(i,j);
+
+                auto cellColor = ui->table->item(i, j)->background().color();
 
                 for(auto it: neighbours)
                     if(ui->table->item(it.first, it.second)->background().color() == Qt::red) countOfAliveCells++;
 
-               // std::cerr << countOfAliveCells << '\n';
-                if(ui->table->item(i, j)->background().color() == Qt::white) {
+                if(cellColor == Qt::white) {
                     if(countOfAliveCells == 3) {isCellAlive[i][j]=true; isTableChanging=true;}
                 }
-                else if(ui->table->item(i, j)->background().color() == Qt::red) { // if the cell is alive
+                else if(cellColor == Qt::red) { // if the cell is alive
 
                     //Any live cell with fewer than two live neighbours dies, as if by underpopulation
                     if(countOfAliveCells < 2) {
@@ -146,10 +150,8 @@ void MainWindow::execLifeGame() {
             }
 
         }
-       // std::cerr << isTableChanging << '\n';
         if(isTableChanging == false) break;
 
- //       break;
         for(int i = 0; i < rowCount; ++i) {
             for(int j = 0; j < columnCount; ++j) {
                 if(isCellAlive[i][j] == false) ui->table->item(i, j)->setBackground(Qt::white);
@@ -170,7 +172,8 @@ void MainWindow::on_table_cellClicked(int row, int column)
     ui->table->item(row, column)->setBackground(Qt::red);
 }
 
-void MainWindow::on_pushButton_clicked()
+
+void MainWindow::on_startGameButton_clicked()
 {
     execLifeGame();
 }

@@ -21,10 +21,14 @@ private slots:
 
     void on_table_cellClicked(int row, int column);
 
-    void on_pushButton_clicked();
+    void on_startGameButton_clicked();
+
+    void on_stopGameButton_clicked();
+
 
 private:
     Ui::MainWindow *ui;
+    bool needToStop;
 };
 
 #endif // MAINWINDOW_H
